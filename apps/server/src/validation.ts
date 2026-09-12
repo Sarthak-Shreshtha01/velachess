@@ -1,8 +1,7 @@
 /**
  * The shared request/response contract every `@hono/zod-openapi` route
- * builds on: the `{id}`/`{repertoireId, chapterId}` path params, the
- * `{ error, details? }` error body, and the one `defaultHook` that
- * produces it for every failed validation.
+ * builds on: the `{id}` path param, the `{ error, details? }` error body,
+ * and the one `defaultHook` that produces it for every failed validation.
  */
 
 import type { Hook } from "@hono/zod-openapi";
@@ -14,18 +13,6 @@ export const idParamSchema = z.object({
     .string()
     .uuid()
     .openapi({ param: { name: "id", in: "path" } }),
-});
-
-/** Shared two-id path param for `/{repertoireId}/chapters/{chapterId}`. */
-export const chapterParamsSchema = z.object({
-  repertoireId: z
-    .string()
-    .uuid()
-    .openapi({ param: { name: "repertoireId", in: "path" } }),
-  chapterId: z
-    .string()
-    .uuid()
-    .openapi({ param: { name: "chapterId", in: "path" } }),
 });
 
 /** The `{ error, details? }` body every migrated route's error branches document. */
