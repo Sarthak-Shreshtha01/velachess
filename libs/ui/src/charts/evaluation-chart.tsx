@@ -1,6 +1,18 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 // react-doctor-disable-next-line react-doctor/prefer-dynamic-import
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  DefaultZIndexes,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ZIndexLayer,
+  useChartHeight,
+  useChartWidth,
+  useXAxisInverseDataSnapScale,
+} from "recharts";
 
 import type { BadgeTone } from "../chess/board-theme.ts";
 import { BADGE_TONE_COLOR } from "../chess/board-theme.ts";
@@ -101,6 +113,37 @@ function CustomTooltip({
   );
 }
 
+/** The whole plot is the click target, not just the 2px dots: the x scale snaps a click to the nearest ply. */
+function PlotClickTarget({
+  onSelectPly,
+}: {
+  onSelectPly?: ((ply: number) => void) | undefined;
+}) {
+  const width = useChartWidth();
+  const height = useChartHeight();
+  const snapToNearestPly = useXAxisInverseDataSnapScale();
+  if (!onSelectPly || !width || !height || !snapToNearestPly) return null;
+
+  return (
+    <ZIndexLayer zIndex={DefaultZIndexes.activeDot + 1}>
+      <rect
+        x={0}
+        y={0}
+        width={width}
+        height={height}
+        fill="transparent"
+        className="cursor-pointer"
+        onClick={(event) => {
+          const bounds = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
+          if (!bounds) return;
+          const ply = snapToNearestPly(event.clientX - bounds.left);
+          if (typeof ply === "number") onSelectPly(ply);
+        }}
+      />
+    </ZIndexLayer>
+  );
+}
+
 export function EvaluationChart({
   data,
   domain,
@@ -110,8 +153,6 @@ export function EvaluationChart({
   selectedPly,
   onSelectPly,
 }: EvaluationChartProps) {
-  const chartData = useMemo(() => data, [data]);
-
   const renderDot = useCallback(
     (props: Record<string, unknown>) => {
       const { cx, cy, payload } = props as {
@@ -133,17 +174,6 @@ export function EvaluationChart({
     [selectedPly, color, onSelectPly],
   );
 
-  // The whole plot is the click target, not just the 2px dots: the tooltip's
-  // active index is the move nearest the pointer.
-  const handleChartClick = useCallback(
-    (state: { activeTooltipIndex?: number | string | null | undefined }) => {
-      if (state.activeTooltipIndex == null) return;
-      const point = chartData[Number(state.activeTooltipIndex)];
-      if (point) onSelectPly?.(point.ply);
-    },
-    [chartData, onSelectPly],
-  );
-
   return (
     <div
       role="img"
@@ -156,9 +186,9 @@ export function EvaluationChart({
         initialDimension={{ width: 320, height: 80 }}
       >
         <LineChart
-          data={chartData}
+          data={data}
           margin={{ top: 6, right: 6, bottom: 6, left: 6 }}
-          onClick={handleChartClick}
+          accessibilityLayer={false}
         >
           <XAxis dataKey="ply" hide />
           <YAxis domain={domain ?? ["auto", "auto"]} hide />
@@ -172,6 +202,7 @@ export function EvaluationChart({
             activeDot={{ r: 4, fill: color, stroke: "var(--background)", strokeWidth: 2 }}
             isAnimationActive={false}
           />
+          <PlotClickTarget onSelectPly={onSelectPly} />
         </LineChart>
       </ResponsiveContainer>
     </div>

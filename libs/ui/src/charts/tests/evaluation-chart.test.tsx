@@ -51,12 +51,33 @@ it("selects the nearest move when the graph is clicked away from a dot", async (
     />,
   );
 
-  const wrapper = container.querySelector(".recharts-wrapper");
-  expect(wrapper).not.toBeNull();
-  // Recharts resolves the active move from the hover, a frame later.
-  fireEvent.mouseMove(wrapper!, { clientX: 300, clientY: 10 });
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  fireEvent.click(wrapper!, { clientX: 300, clientY: 10 });
+  fireEvent.click(container.querySelector("rect.cursor-pointer")!, {
+    clientX: 300,
+    clientY: 10,
+  });
 
   await waitFor(() => expect(selected).toEqual([3]));
+});
+
+it("selects the first move when the left edge of the graph is clicked", async () => {
+  const selected: number[] = [];
+  const { container } = render(
+    <EvaluationChart
+      data={[
+        { ply: 1, value: 0.4 },
+        { ply: 2, value: 0.6 },
+        { ply: 3, value: 0.5 },
+      ]}
+      domain={[0, 1]}
+      title="Evaluation"
+      onSelectPly={(ply) => selected.push(ply)}
+    />,
+  );
+
+  fireEvent.click(container.querySelector("rect.cursor-pointer")!, {
+    clientX: 0,
+    clientY: 10,
+  });
+
+  await waitFor(() => expect(selected).toEqual([1]));
 });
