@@ -62,8 +62,7 @@ function CustomDot({
       fill={color}
       stroke="var(--background)"
       strokeWidth={strokeWidth}
-      className={cn("transition-all duration-150", onSelectPly && "cursor-pointer")}
-      onClick={() => onSelectPly?.(payload.ply)}
+      className="transition-all duration-150"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -134,14 +133,33 @@ export function EvaluationChart({
     [selectedPly, color, onSelectPly],
   );
 
+  // The whole plot is the click target, not just the 2px dots: the tooltip's
+  // active index is the move nearest the pointer.
+  const handleChartClick = useCallback(
+    (state: { activeTooltipIndex?: number | string | null | undefined }) => {
+      if (state.activeTooltipIndex == null) return;
+      const point = chartData[Number(state.activeTooltipIndex)];
+      if (point) onSelectPly?.(point.ply);
+    },
+    [chartData, onSelectPly],
+  );
+
   return (
-    <div role="img" aria-label={title} className={cn("h-full w-full", className)}>
+    <div
+      role="img"
+      aria-label={title}
+      className={cn("h-full w-full", onSelectPly && "cursor-pointer", className)}
+    >
       <ResponsiveContainer
         width="100%"
         height="100%"
         initialDimension={{ width: 320, height: 80 }}
       >
-        <LineChart data={chartData} margin={{ top: 6, right: 6, bottom: 6, left: 6 }}>
+        <LineChart
+          data={chartData}
+          margin={{ top: 6, right: 6, bottom: 6, left: 6 }}
+          onClick={handleChartClick}
+        >
           <XAxis dataKey="ply" hide />
           <YAxis domain={domain ?? ["auto", "auto"]} hide />
           <Tooltip content={<CustomTooltip />} />
