@@ -21,6 +21,12 @@ updates:
       tanstack:
         patterns:
           - "@tanstack/*"
+      # @lingui/react pins its own @lingui/core exactly, so a PR that
+      # bumps one package alone lands two copies of the I18n class and
+      # fails typecheck. The family only merges together.
+      lingui:
+        patterns:
+          - "@lingui/*"
 
   - package-ecosystem: github-actions
     directory: /

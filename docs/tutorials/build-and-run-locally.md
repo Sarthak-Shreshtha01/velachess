@@ -8,7 +8,7 @@ application, API, worker, and database will be running and ready for development
 
 Install these tools:
 
-- Node.js 22 or later
+- Node.js 24 or later
 - pnpm 10.28.0, the version declared by this repository
 - Git
 - Docker with Docker Compose

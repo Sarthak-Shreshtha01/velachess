@@ -2,7 +2,7 @@
 #   docker build -f apps/worker/Dockerfile .
 # Same base recipe as the api image; only the command differs — the worker
 # consumes pg-boss queues instead of serving HTTP.
-FROM node:22-bookworm-slim
+FROM node:24-bookworm-slim
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends stockfish \
