@@ -23,10 +23,30 @@ updates:
           - "@tanstack/*"
       # @lingui/react pins its own @lingui/core exactly, so a PR that
       # bumps one package alone lands two copies of the I18n class and
-      # fails typecheck. The family only merges together.
+      # fails typecheck. The family only merges together. Dependabot
+      # split it across #105, #107 and #110; all three were red for that
+      # reason and none could pass on its own.
       lingui:
         patterns:
           - "@lingui/*"
+
+    ignore:
+      # Pinned to an exact 6.6.0 in apps/site, and held there. The 6.7.0
+      # WASM build is compiled against an swc_core the Next 16.3.4 plugin
+      # runner (swc_plugin_runner 30.0.1) cannot deserialize, so it fails
+      # the apps/site build outright — see #97, closed for this in
+      # September 2026. 6.6.0 peer-resolves against @lingui/core 6.8.0
+      # without complaint, so the skew is fine.
+      #
+      # Declared here rather than left as the `@dependabot ignore this
+      # minor version` from #97: that only covered 6.7.x and lived in
+      # Dependabot's own state, so 6.8.0 would arrive inside the `lingui`
+      # group above and redden the whole family's PR.
+      #
+      # Revisit when Next ships an swc_plugin_runner the plugin supports;
+      # until then a bump here cannot pass CI.
+      - dependency-name: "@lingui/swc-plugin"
+        versions: [">=6.7.0"]
 
   - package-ecosystem: github-actions
     directory: /
