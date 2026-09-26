@@ -2,7 +2,7 @@
 # (pnpm-workspace.yaml's onlyBuiltDependencies all fetch prebuilt
 # binaries in postinstall) — apps/*/Dockerfile stays the source of
 # truth for production images.
-FROM mcr.microsoft.com/devcontainers/javascript-node:22-bookworm
+FROM mcr.microsoft.com/devcontainers/javascript-node:24-bookworm
 
 # Base image ships pnpm + eslint globally via npm, ahead of corepack on
 # PATH — remove so pnpm resolves to the version pinned below, not that

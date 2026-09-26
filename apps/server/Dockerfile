@@ -1,6 +1,6 @@
 # velachess api — build from the repo root (the monorepo is the context):
 #   docker build -f apps/server/Dockerfile .
-FROM node:22-bookworm-slim
+FROM node:24-bookworm-slim
 
 RUN corepack enable
 WORKDIR /app

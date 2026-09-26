@@ -32,7 +32,7 @@ Chess.com / Lichess games / PGN Import
 
 ## Quick start
 
-Requires Node.js 22 or later, pnpm via Corepack, and Docker.
+Requires Node.js 24 or later, pnpm via Corepack, and Docker.
 
 ```bash
 cp .env.example .env
