@@ -132,7 +132,10 @@ function PlotClickTarget({
         width={width}
         height={height}
         fill="transparent"
+        data-slot="evaluation-chart-click-target"
         className="cursor-pointer"
+        // ZIndexLayer's group is focusable; letting the click focus it rings the whole chart.
+        onMouseDown={(event) => event.preventDefault()}
         onClick={(event) => {
           const bounds = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
           if (!bounds) return;
@@ -175,11 +178,7 @@ export function EvaluationChart({
   );
 
   return (
-    <div
-      role="img"
-      aria-label={title}
-      className={cn("h-full w-full", onSelectPly && "cursor-pointer", className)}
-    >
+    <div role="img" aria-label={title} className={cn("h-full w-full", className)}>
       <ResponsiveContainer
         width="100%"
         height="100%"

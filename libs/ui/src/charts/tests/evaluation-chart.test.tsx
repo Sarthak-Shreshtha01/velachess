@@ -51,10 +51,13 @@ it("selects the nearest move when the graph is clicked away from a dot", async (
     />,
   );
 
-  fireEvent.click(container.querySelector("rect.cursor-pointer")!, {
-    clientX: 300,
-    clientY: 10,
-  });
+  fireEvent.click(
+    container.querySelector("[data-slot='evaluation-chart-click-target']")!,
+    {
+      clientX: 300,
+      clientY: 10,
+    },
+  );
 
   await waitFor(() => expect(selected).toEqual([3]));
 });
@@ -74,10 +77,13 @@ it("selects the first move when the left edge of the graph is clicked", async ()
     />,
   );
 
-  fireEvent.click(container.querySelector("rect.cursor-pointer")!, {
-    clientX: 0,
-    clientY: 10,
-  });
+  fireEvent.click(
+    container.querySelector("[data-slot='evaluation-chart-click-target']")!,
+    {
+      clientX: 0,
+      clientY: 10,
+    },
+  );
 
   await waitFor(() => expect(selected).toEqual([1]));
 });
